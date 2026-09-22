@@ -6,22 +6,15 @@ SLAM map, recognises the objects it passes and remembers where they are — so
 `go to chair` makes it stop exploring and drive to the real chair. Gazebo,
 SLAM, Nav2, frontier exploration, semantic memory, command parsing and the
 coordinator state machine are all provided and working; the course asks you to
-write the object detector in `tb3_detector`.
+write the object detector in `tb3_detector`. The system is designed *map first,
+query later*: the robot builds a semantic map while it explores, and `go to X`
+is a lookup in that map.
 
 As shipped, that detector is a stub: `detector_core.py` publishes empty
 detections and the rest of the pipeline waits for it. Implementing its `load()`
 and `infer()` is the graded task. The assignment and acceptance criteria are in
 **[INSTRUCTIONS.md](INSTRUCTIONS.md)**; rationale and measured results are in
 **[NOTES.md](NOTES.md)**.
-
-## Demo
-
-Two clips are planned and land in `docs/media/`: **`exploration.gif`**
-(autonomous frontier exploration mapping the room) and **`navigate.gif`**
-(`go to person 0` interrupting exploration and driving to the target).
-
-<!-- DEMO_PLACEHOLDER: docs/media/exploration.gif -->
-<!-- DEMO_PLACEHOLDER: docs/media/navigate.gif -->
 
 ## Repository layout
 
@@ -40,14 +33,9 @@ Outside `src/`: [`docker/`](docker/) is the image behind the macOS and Windows
 setups, [`docs/`](docs/) the setup pages and demo media, [`scripts/`](scripts/)
 the acceptance run.
 
-```text
-camera ─► tb3_detector ─┐
-                        ├─► tb3_localizer ─► tb3_memory ─► semantic_map_memory
-LiDAR ──────────────────┘   (boxes → x,y)    (stable IDs)  (landmarks on the map)
-                                                                    │
-"go to person 2" ─► tb3_query ─► tb3_nav_adapter ─► tb3_coordinator + Nav2
-                    (parse)      (approach pose)   (pauses exploring, drives)
-```
+![System overview](docs/media/system_overview.svg)
+
+<sub>Full-resolution PNG: [docs/media/system_overview.png](docs/media/system_overview.png)</sub>
 
 ## Setup by platform
 
@@ -137,11 +125,14 @@ ros2 topic pub --once /user_command std_msgs/String "data: 'go to person 0'"
 ros2 topic echo /coordinator_node/status
 ```
 
-**Exploration takes 2–8 minutes.** Only objects the robot has actually seen can
-be navigated to, so a `go to …` sent too early fails with
-`no active <target> in memory`. Watch `/semantic_memory_markers` in RViz and
-send commands once the landmarks you want have appeared. You can restart any
-single terminal without touching the others.
+**Map first, query later.** Exploration takes 2–8 minutes, and only objects that
+are already on the semantic map can be navigated to: `go to X` is a lookup in
+that map, not a search for X. Commands are not queued — a reply of
+`no active <target> in memory` means the robot has not seen that object yet;
+wait until its marker appears in `/semantic_memory_markers` in RViz, then send
+the command again. Later commands reuse the same map, so once a landmark is
+there it stays reachable. You can restart any single terminal without touching
+the others.
 
 ## More
 
