@@ -16,6 +16,20 @@ and `infer()` is the graded task. The assignment and acceptance criteria are in
 **[INSTRUCTIONS.md](INSTRUCTIONS.md)**; rationale and measured results are in
 **[NOTES.md](NOTES.md)**.
 
+## Demo
+
+![Map first](docs/media/demo_map.gif)
+
+Map first: the robot explores the room on its own, and what it detects
+becomes landmarks on the map (person, trash can, chair).
+
+![Query later](docs/media/demo_query.gif)
+
+Query later: `go to person`, `go to trash can`, `go to chair`; each command
+drives to the landmark, then exploration resumes.
+
+<sub>Sped up; the speed factor is shown in the corner.</sub>
+
 ## Repository layout
 
 | Package (`src/`) | Role | You edit it? |
