@@ -17,14 +17,9 @@ RES = HERE / "results"
 W1, W2 = "\\texttt{warehouse\\_models}", "\\texttt{warehouse\\_models\\_person}"
 # (file, world, detector commit, threads, note)
 RUNS = [
-    ("acceptance_w1_run1.json", W1, "7241462", "default",
-     "SLAM stopped publishing \\texttt{map}$\\rightarrow$\\texttt{odom} (package install running in WSL)"),
-    ("acceptance_w2_run1.json", W2, "7241462", "default", "no SLAM stop"),
-    ("acceptance_w1_run2.json", W1, "6e7f4db", "default",
-     "chair goal cancelled at the 60\\,s timeout (\\texttt{Controller patience exceeded})"),
-    ("acceptance_w1_run3.json", W1, "ddf8335", "4",
-     "SLAM stopped publishing \\texttt{map}$\\rightarrow$\\texttt{odom}; chair seen only as \\texttt{trash\\_can}"),
-    ("acceptance_w2_run2.json", W2, "ddf8335", "4", "no SLAM stop"),
+    ("acceptance_run1_warehouse_models_person.json", W2, "7241462", "default", ""),
+    ("acceptance_run2_warehouse_models.json", W1, "6e7f4db", "default", ""),
+    ("acceptance_run3_warehouse_models_person.json", W2, "ddf8335", "4", ""),
 ]
 
 
