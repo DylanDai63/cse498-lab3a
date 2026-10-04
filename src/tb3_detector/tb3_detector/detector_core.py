@@ -178,9 +178,6 @@ class DetectorCore:
              - Optional but useful: log the class names once,
                list(self._model.names.values()) — you should see exactly
                ['person', 'trash_can', 'chair'].
-
-        The stub below intentionally does NOT raise, so that the unmodified
-        course repo starts up and publishes empty detections.
         """
         # Fail loudly and readably if a dependency is missing.
         if not _ULTRALYTICS_AVAILABLE:
@@ -199,10 +196,16 @@ class DetectorCore:
         # Load the fine-tuned YOLO26 weights and move them to the configured device.
         self._model = _UltralyticsYOLO(str(self.model_path))
         self._model.to(self.device)
-        logger.info(
-            "DetectorCore.load(): %s on %s, classes %s",
-            self.model_path.name, self.device, list(self._model.names.values()),
-        )
+
+        # Warn (do not raise) if the whitelist names a label these weights never
+        # emit: such detections would otherwise disappear silently (NOTES.md §1.4).
+        names = set(self._model.names.values())
+        unknown = (self.class_filter or set()) - names
+        if unknown:
+            logger.warning(
+                "DetectorCore.load(): class_filter %s is not emitted by %s (classes: %s)",
+                sorted(unknown), self.model_path.name, sorted(names),
+            )
 
     # ------------------------------------------------------------------
     def infer(self, bgr_image) -> list[dict]:
