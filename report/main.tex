@@ -1,5 +1,5 @@
 \documentclass[11pt]{article}
-\usepackage[margin=1in]{geometry}
+\usepackage[margin=0.85in]{geometry}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{tabularx}
@@ -132,7 +132,7 @@ A short-term memory node, working in the robot frame, associates observations wi
 
 \begin{figure}[H]
 \centering
-\IfFileExists{figures/rviz_landmarks.png}{\includegraphics[width=0.82\textwidth]{figures/rviz_landmarks.png}}{\fbox{\parbox[c][5cm][c]{8cm}{\centering RViz screenshot}}}
+\IfFileExists{figures/rviz_landmarks.png}{\includegraphics[width=0.65\textwidth]{figures/rviz_landmarks.png}}{\fbox{\parbox[c][5cm][c]{8cm}{\centering RViz screenshot}}}
 \caption{RViz during the first command of the demo video (\texttt{move to the person in the white shirt}): the SLAM map, the laser scan (red), the Nav2 plan from the robot to the approach pose (green line) and the semantic landmarks (spheres with id and observation count). \texttt{trash\_can\_0} is the real trash can; \texttt{trash\_can\_1} sits on the chair (Section~\ref{sec:results}). The panel at the top left is the detector debug image.}
 \label{fig:views}
 \end{figure}
