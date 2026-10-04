@@ -53,6 +53,7 @@ Pixel-coordinate convention (standard image coordinates):
 
 from __future__ import annotations
 import logging
+import os
 from pathlib import Path
 from typing import Any
 
@@ -193,6 +194,14 @@ class DetectorCore:
                 "or pass an absolute model_path."
             )
 
+        # Optional cap on the CPU threads PyTorch uses for inference (applied in
+        # infer()). Unset keeps the default behaviour. On a laptop that also runs
+        # Gazebo, RViz, SLAM and Nav2, the default can starve the navigation stack.
+        self._threads = int(os.environ.get("TB3_DETECTOR_THREADS") or 0)
+        if self._threads:
+            logger.warning("DetectorCore.load(): torch CPU threads will be capped at %d "
+                           "(TB3_DETECTOR_THREADS)", self._threads)
+
         # Load the fine-tuned YOLO26 weights and move them to the configured device.
         self._model = _UltralyticsYOLO(str(self.model_path))
         self._model.to(self.device)
@@ -258,6 +267,13 @@ class DetectorCore:
             results = self._model.predict(
                 bgr_image, conf=self.conf_threshold, device=self.device, verbose=False,
             )
+
+        # ultralytics resets torch's thread count when it sets up the predictor on the
+        # first call, so the optional cap from load() is applied after inference.
+        if self._threads:
+            import torch
+            if torch.get_num_threads() != self._threads:
+                torch.set_num_threads(self._threads)
 
         detections: list[dict] = []
         for result in results:
