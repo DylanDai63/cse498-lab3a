@@ -149,6 +149,7 @@ class DetectorCore:
         self.enable_tracking = enable_tracking
 
         self._model: Any = None   # set by load()
+        self._threads = 0         # optional CPU thread cap, set by load()
 
     # ------------------------------------------------------------------
     def load(self) -> None:
@@ -197,7 +198,14 @@ class DetectorCore:
         # Optional cap on the CPU threads PyTorch uses for inference (applied in
         # infer()). Unset keeps the default behaviour. On a laptop that also runs
         # Gazebo, RViz, SLAM and Nav2, the default can starve the navigation stack.
-        self._threads = int(os.environ.get("TB3_DETECTOR_THREADS") or 0)
+        raw = os.environ.get("TB3_DETECTOR_THREADS", "").strip()
+        try:
+            self._threads = int(raw) if raw else 0
+        except ValueError:
+            raise ValueError(
+                f"TB3_DETECTOR_THREADS must be a non-negative integer, got {raw!r}") from None
+        if self._threads < 0:
+            raise ValueError(f"TB3_DETECTOR_THREADS must be >= 0, got {self._threads}")
         if self._threads:
             logger.warning("DetectorCore.load(): torch CPU threads will be capped at %d "
                            "(TB3_DETECTOR_THREADS)", self._threads)
