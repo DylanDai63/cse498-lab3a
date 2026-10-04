@@ -182,13 +182,27 @@ class DetectorCore:
         The stub below intentionally does NOT raise, so that the unmodified
         course repo starts up and publishes empty detections.
         """
-        # TODO(student): replace this stub with real model loading.
-        logger.warning(
-            "DetectorCore.load(): STUB — no model loaded. "
-            "detector_node will publish EMPTY detections until you implement "
-            "DetectorCore (see INSTRUCTIONS.md)."
+        # Fail loudly and readably if a dependency is missing.
+        if not _ULTRALYTICS_AVAILABLE:
+            raise RuntimeError(
+                "DetectorCore.load(): the 'ultralytics' package is not installed. "
+                "Install it with:  pip install 'ultralytics==8.4.31'"
+            )
+        if not self.model_path.is_file():
+            raise FileNotFoundError(
+                f"DetectorCore.load(): weights file not found: {self.model_path}. "
+                "Rebuild once with  colcon build --symlink-install --packages-select "
+                "tb3_detector  so models/tb3det_yolo26n.pt reaches install/, "
+                "or pass an absolute model_path."
+            )
+
+        # Load the fine-tuned YOLO26 weights and move them to the configured device.
+        self._model = _UltralyticsYOLO(str(self.model_path))
+        self._model.to(self.device)
+        logger.info(
+            "DetectorCore.load(): %s on %s, classes %s",
+            self.model_path.name, self.device, list(self._model.names.values()),
         )
-        self._model = None
 
     # ------------------------------------------------------------------
     def infer(self, bgr_image) -> list[dict]:
@@ -228,8 +242,38 @@ class DetectorCore:
           - Optional: if self.enable_tracking, use self._model.track(...,
             persist=True) and fill "track_id" from box.id.
         """
-        # TODO(student): replace this stub with real YOLO inference.
-        return []
+        if self._model is None:
+            raise RuntimeError("DetectorCore.infer() called before load(): no model is loaded.")
+
+        # ultralytics takes the BGR frame as is and returns boxes in original-image pixels.
+        if self.enable_tracking:
+            results = self._model.track(
+                bgr_image, conf=self.conf_threshold, device=self.device,
+                persist=True, verbose=False,
+            )
+        else:
+            results = self._model.predict(
+                bgr_image, conf=self.conf_threshold, device=self.device, verbose=False,
+            )
+
+        detections: list[dict] = []
+        for result in results:
+            for box in result.boxes:
+                # Report the label exactly as the network emits it; the mapping to
+                # task names happens downstream (semantic_targets.yaml).
+                label = result.names[int(box.cls)]
+                if self.class_filter is not None and label not in self.class_filter:
+                    continue
+                track_id = None
+                if self.enable_tracking and box.id is not None:
+                    track_id = int(box.id)
+                detections.append({
+                    "label": label,
+                    "conf": float(box.conf),
+                    "bbox_xyxy": [float(v) for v in box.xyxy[0].tolist()],  # [x1, y1, x2, y2]
+                    "track_id": track_id,
+                })
+        return detections
 
     # ------------------------------------------------------------------
     @property
