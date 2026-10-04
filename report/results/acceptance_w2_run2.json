@@ -1,0 +1,91 @@
+{
+  "world": "warehouse_models_person",
+  "verdict": "FAIL",
+  "exit_code": 1,
+  "abort_reason": "",
+  "commands_expected": 3,
+  "commands_run": 3,
+  "pass_distance_m": 1.2,
+  "max_landmark_error_m": 0.5,
+  "all_landmarks_found": true,
+  "commands": [
+    {
+      "command": "go to person 0",
+      "landmark_id": "person_0",
+      "semantic_name": "person",
+      "landmark_xy": [
+        -2.0341255143968557,
+        1.7746995888341626
+      ],
+      "matched_truth": "person_corner_nw",
+      "landmark_error_m": 0.2278618061598082,
+      "final_distance_m": 0.8212690416666149,
+      "elapsed_s": 7.21,
+      "outcome": "REACHED",
+      "passed": true,
+      "note": "",
+      "robot_pose_ok": true,
+      "detail": "[TARGET_REACHED] Nav2 goal succeeded \u2014 target reached"
+    },
+    {
+      "command": "go to person 1",
+      "landmark_id": "person_1",
+      "semantic_name": "-",
+      "landmark_xy": null,
+      "matched_truth": "-",
+      "landmark_error_m": null,
+      "final_distance_m": null,
+      "elapsed_s": 0.0,
+      "outcome": "SKIPPED",
+      "passed": false,
+      "note": "person_1 is 0.28 m from the map origin, inside the nav adapter's 0.80 m minimum (NOTES.md 5.1): no goal pose can be produced",
+      "robot_pose_ok": true,
+      "detail": ""
+    },
+    {
+      "command": "go to person 2",
+      "landmark_id": "person_2",
+      "semantic_name": "person",
+      "landmark_xy": [
+        -1.9810951342162928,
+        -1.9893527548362868
+      ],
+      "matched_truth": "person_corner_sw",
+      "landmark_error_m": 0.02168333317682604,
+      "final_distance_m": 0.7759227751522699,
+      "elapsed_s": 19.23,
+      "outcome": "REACHED",
+      "passed": true,
+      "note": "",
+      "robot_pose_ok": true,
+      "detail": "[TARGET_REACHED] Nav2 goal succeeded \u2014 target reached"
+    }
+  ],
+  "terminals": {
+    "T1": {
+      "what": "Gazebo + TurtleBot3 spawn",
+      "error_lines": 0,
+      "crash_markers": 0
+    },
+    "T2": {
+      "what": "SLAM Toolbox + Nav2 + RViz",
+      "error_lines": 6,
+      "crash_markers": 0
+    },
+    "T3": {
+      "what": "Course backend (memory, query, coordinator, exploration)",
+      "error_lines": 0,
+      "crash_markers": 0
+    },
+    "T4": {
+      "what": "Localizer (bbox + LiDAR -> object position)",
+      "error_lines": 0,
+      "crash_markers": 0
+    },
+    "T5": {
+      "what": "Detector (YOLO inference on the camera image)",
+      "error_lines": 0,
+      "crash_markers": 0
+    }
+  }
+}

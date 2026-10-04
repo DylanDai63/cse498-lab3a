@@ -1,0 +1,91 @@
+{
+  "world": "warehouse_models",
+  "verdict": "FAIL",
+  "exit_code": 1,
+  "abort_reason": "",
+  "commands_expected": 3,
+  "commands_run": 3,
+  "pass_distance_m": 1.2,
+  "max_landmark_error_m": 0.5,
+  "all_landmarks_found": true,
+  "commands": [
+    {
+      "command": "go to person 0",
+      "landmark_id": "person_0",
+      "semantic_name": "person",
+      "landmark_xy": [
+        0.6924723040083811,
+        -2.154794155767543
+      ],
+      "matched_truth": "semantic_person",
+      "landmark_error_m": 0.10291526413536203,
+      "final_distance_m": 1.8869924175653172,
+      "elapsed_s": 25.44,
+      "outcome": "FAILED",
+      "passed": false,
+      "note": "",
+      "robot_pose_ok": true,
+      "detail": "[TARGET_FAILED] Nav2 goal failed (status=6)"
+    },
+    {
+      "command": "go to trash can",
+      "landmark_id": "trash_can_1",
+      "semantic_name": "trash_can",
+      "landmark_xy": [
+        0.6169893446106174,
+        1.3981838345674495
+      ],
+      "matched_truth": "semantic_trash_can",
+      "landmark_error_m": 0.13137715573316305,
+      "final_distance_m": 2.6012112581451357,
+      "elapsed_s": 27.67,
+      "outcome": "FAILED",
+      "passed": false,
+      "note": "",
+      "robot_pose_ok": true,
+      "detail": "[TARGET_FAILED] Nav2 goal failed (status=6)"
+    },
+    {
+      "command": "go to chair",
+      "landmark_id": "-",
+      "semantic_name": "-",
+      "landmark_xy": null,
+      "matched_truth": "-",
+      "landmark_error_m": null,
+      "final_distance_m": null,
+      "elapsed_s": 0.21,
+      "outcome": "FAILED",
+      "passed": false,
+      "note": "",
+      "robot_pose_ok": true,
+      "detail": "[TARGET_FAILED] query failed: no active chair in memory"
+    }
+  ],
+  "terminals": {
+    "T1": {
+      "what": "Gazebo + TurtleBot3 spawn",
+      "error_lines": 0,
+      "crash_markers": 0
+    },
+    "T2": {
+      "what": "SLAM Toolbox + Nav2 + RViz",
+      "error_lines": 1479,
+      "crash_markers": 0
+    },
+    "T3": {
+      "what": "Course backend (memory, query, coordinator, exploration)",
+      "error_lines": 0,
+      "crash_markers": 0
+    },
+    "T4": {
+      "what": "Localizer (bbox + LiDAR -> object position)",
+      "error_lines": 0,
+      "crash_markers": 0
+    },
+    "T5": {
+      "what": "Detector (YOLO inference on the camera image)",
+      "error_lines": 0,
+      "crash_markers": 0
+    }
+  }
+}
